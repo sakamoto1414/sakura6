@@ -1,97 +1,240 @@
+!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Loading...</title>
+    <title>LINE公式アカウント｜お得な情報をお届け</title>
     <style>
-        :root { --line-green: #06C755; --bg-gray: #f8f9fa; }
-        body, html { height: 100%; margin: 0; font-family: sans-serif; background: var(--bg-gray); color: #333; display: flex; align-items: center; justify-content: center; }
-        .main-card { background: #fff; width: 90%; max-width: 380px; padding: 40px 20px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); text-align: center; }
-        .loader-ring { display: inline-block; width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid var(--line-green); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .status-txt { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-        .sub-txt { font-size: 14px; color: #666; line-height: 1.6; }
-        .manual-trigger { margin-top: 30px; display: block; background: var(--line-green); color: #fff; text-decoration: none; padding: 15px; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(6,199,85,0.3); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap');
+
+        :root {
+            --line-green: #06C755;
+            --text-main: #1a1a1a;
+            --text-sub: #5f6368;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .card {
+            background: var(--card);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            padding: 36px 24px 28px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            text-align: center;
+            animation: fadeUp 0.5s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .line-icon {
+            width: 64px; height: 64px;
+            background: var(--line-green);
+            border-radius: 18px;
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(6,199,85,0.25);
+        }
+        .line-icon svg { width: 38px; height: 38px; fill: #fff; }
+
+        .heading {
+            font-size: 20px;
+            font-weight: 900;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .heading em { font-style: normal; color: var(--line-green); }
+
+        .desc {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.75;
+            margin-bottom: 24px;
+        }
+
+        .benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+        .benefit-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f7faf8;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+        }
+        .benefit-row .icon {
+            flex-shrink: 0;
+            width: 32px; height: 32px;
+            background: var(--line-green);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .cta-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            background: var(--line-green);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(6,199,85,0.3);
+            transition: transform 0.15s;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-btn:active { transform: scale(0.97); }
+        .cta-btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 18px;
+            border: 2px solid var(--line-green);
+            animation: pulse 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.03); }
+        }
+
+        .cta-sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 14px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.6;
+        }
     </style>
-    
+
+    <!-- TikTok Pixel -->
     <script>
         !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-        
-        // ここに新しいPixel IDを入力
-        ttq.load('YOUR_NEW_PIXEL_ID');
+        ttq.load('YOUR_PIXEL_ID');
         ttq.page();
     }(window, document, 'ttq');
-</script>
+    </script>
 </head>
 <body>
 
-<div class="main-card">
-    <div class="loader-ring"></div>
-    <div class="status-txt">認証を完了しています...</div>
-    <p class="sub-txt">
-        LINEアプリへ安全に接続します。<br>
-        このまま数秒お待ちください。
+<div class="card">
+    <div class="line-icon">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .348-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .349-.281.631-.63.631h-2.386c-.345 0-.627-.282-.627-.631V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .349-.281.631-.629.631M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+    </div>
+
+    <h1 class="heading">
+        <em>友だち追加</em>で<br>限定情報をGET！
+    </h1>
+
+    <p class="desc">
+        LINE公式アカウントを友だち追加すると、<br>
+        お得なキャンペーン情報や<br>
+        限定コンテンツをお届けします。
     </p>
-    
-    <a href="javascript:void(0);" id="jumpBtn" class="manual-trigger">
-        LINEを開く
+
+    <div class="benefits">
+        <div class="benefit-row">
+            <span class="icon">🎁</span>
+            <span>友だち追加で特典プレゼント</span>
+        </div>
+        <div class="benefit-row">
+            <span class="icon">📢</span>
+            <span>最新キャンペーン情報を配信</span>
+        </div>
+        <div class="benefit-row">
+            <span class="icon">💬</span>
+            <span>LINEで気軽にお問い合わせ</span>
+        </div>
+    </div>
+
+    <a href="https://lin.ee/R5HWtHm" id="ctaBtn" class="cta-btn">
+        <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .348-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .349-.281.631-.63.631h-2.386c-.345 0-.627-.282-.627-.631V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .349-.281.631-.629.631M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        友だち追加する（無料）
     </a>
+    <p class="cta-sub">まもなくLINEアプリが開きます</p>
+
+    <div class="footer">
+        運営: あなたのサービス名<br>
+        お問い合わせ: info@example.com
+    </div>
 </div>
 
 <script>
 (function() {
-    // 1. URLの難読化 (lin.ee/R5HWtHm を分割)
-    const protocol = "https://";
-    const domain = "lin.ee/";
-    const path = "R5HWtHm";
-    const finalTarget = protocol + domain + path;
+    var lineUrl = "https://lin.ee/R5HWtHm";
+    var btn = document.getElementById('ctaBtn');
+    var jumped = false;
 
-    // ボタンにURLをセット
-    const btn = document.getElementById('jumpBtn');
-    btn.href = finalTarget;
-
-    // 2. 遷移実行関数
-    const performJump = () => {
-        // 二重発火防止
-        if(window.isRedirected) return;
-        window.isRedirected = true;
-
-        // TikTok内ブラウザ等、一部の環境でlocation.hrefが効かない場合の対策
-        setTimeout(() => {
-            window.location.replace(finalTarget);
-        }, 50);
-        
-        // 予備：強制リンククリック
-        const a = document.createElement('a');
-        a.href = finalTarget;
-        a.rel = 'noopener noreferrer';
-        a.click();
-    };
-
-    // 3. 発火条件の多様化
-    // A: ページ読み込み完了時 (タイミングをランダムに少しずらす)
-    window.addEventListener('load', () => {
-        const delay = Math.floor(Math.random() * (1200 - 800 + 1)) + 800; // 800ms〜1200ms
-        setTimeout(performJump, delay);
-    });
-
-    // B: ユーザーのわずかな操作を検知（クローラー回避に有効）
-    ['touchstart', 'scroll', 'click'].forEach(event => {
-        window.addEventListener(event, () => {
-            // ページロードから500ms以上経過してれば即実行
-            setTimeout(performJump, 100);
-        }, {once: true});
-    });
-
-    // C: TikTokアプリ内ブラウザ特有の挙動対策
-    // アプリがバックグラウンドに回った時（遷移成功時）の処理
-    document.addEventListener("visibilitychange", function() {
-        if (document.visibilityState === 'hidden') {
-            console.log("Jump success");
+    function go() {
+        if (jumped) return;
+        jumped = true;
+        if (typeof ttq !== 'undefined') {
+            ttq.track('ClickButton');
         }
+        window.location.href = lineUrl;
+    }
+
+    // ボタンクリック → 即遷移
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        go();
     });
 
+    // 自動リダイレクト（1.5秒後）
+    window.addEventListener('load', function() {
+        setTimeout(go, 1500);
+    });
+
+    // タッチ・スクロール検知で即遷移（TikTokアプリ内ブラウザ対策）
+    ['touchstart', 'scroll'].forEach(function(evt) {
+        window.addEventListener(evt, function() {
+            setTimeout(go, 100);
+        }, { once: true });
+    });
 })();
 </script>
 
