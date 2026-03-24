@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,7 @@
 
         :root {
             --line-green: #06C755;
+            --line-green-dark: #05b34c;
             --text-main: #1a1a1a;
             --text-sub: #5f6368;
             --bg: #f0f2f5;
@@ -99,6 +100,15 @@
             color: #fff;
         }
 
+        /* 全画面タップエリア */
+        .tap-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         .cta-btn {
             display: flex;
             align-items: center;
@@ -115,12 +125,13 @@
             cursor: pointer;
             text-decoration: none;
             box-shadow: 0 6px 20px rgba(6,199,85,0.3);
-            transition: transform 0.15s;
+            transition: transform 0.15s, background 0.15s;
             -webkit-tap-highlight-color: transparent;
             position: relative;
             overflow: hidden;
+            z-index: 60;
         }
-        .cta-btn:active { transform: scale(0.97); }
+        .cta-btn:active { transform: scale(0.97); background: var(--line-green-dark); }
         .cta-btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
 
         .cta-btn::after {
@@ -137,10 +148,138 @@
             50% { opacity: 0.4; transform: scale(1.03); }
         }
 
-        .cta-sub {
-            font-size: 12px;
-            color: var(--text-sub);
+        .tap-hint {
+            font-size: 13px;
+            color: var(--line-green);
             margin-top: 14px;
+            font-weight: 600;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* フォールバック */
+        .fallback {
+            display: none;
+            margin-top: 20px;
+            padding: 20px 16px;
+            background: #fefefe;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 16px;
+            animation: fadeUp 0.35s ease-out;
+        }
+        .fallback.show { display: block; }
+
+        .fallback-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text-main);
+        }
+
+        .fallback-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fallback-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-sub);
+        }
+        .fallback-step .num {
+            flex-shrink: 0;
+            width: 24px; height: 24px;
+            background: var(--line-green);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .copy-id-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .line-id-box {
+            flex: 1;
+            padding: 12px 14px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.3px;
+            text-align: center;
+            user-select: all;
+            -webkit-user-select: all;
+        }
+        .copy-btn {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            background: var(--line-green);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 60;
+            position: relative;
+        }
+        .copy-btn.copied { background: #333; }
+
+        .open-browser-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 14px;
+            padding: 13px;
+            background: #fff;
+            color: var(--line-green);
+            font-size: 14px;
+            font-weight: 700;
+            border: 2px solid var(--line-green);
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 60;
+            position: relative;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         .footer {
@@ -160,6 +299,9 @@
     </script>
 </head>
 <body>
+
+<!-- 全画面タップエリア（フォールバック表示前のみ有効） -->
+<div class="tap-overlay" id="tapOverlay"></div>
 
 <div class="card">
     <div class="line-icon">
@@ -191,52 +333,244 @@
         </div>
     </div>
 
-    <a href="https://lin.ee/R5HWtHm" id="ctaBtn" class="cta-btn">
+    <a href="line://ti/p/@965snoyg" id="ctaBtn" class="cta-btn">
         <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .348-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .349-.281.631-.63.631h-2.386c-.345 0-.627-.282-.627-.631V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .349-.281.631-.629.631M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
         友だち追加する（無料）
     </a>
-    <p class="cta-sub">まもなくLINEアプリが開きます</p>
+    <p class="tap-hint" id="tapHint">▲ 画面のどこをタップしてもOK ▲</p>
+
+    <!-- フォールバック -->
+    <div class="fallback" id="fallback">
+        <p class="fallback-title">⚠ LINEが開かない場合はこちら</p>
+        <div class="fallback-methods">
+            <div class="fallback-step">
+                <span class="num">1</span>
+                <span>下のIDをコピー</span>
+            </div>
+            <div class="fallback-step">
+                <span class="num">2</span>
+                <span>LINEアプリ →「ホーム」→「友だち追加」→「ID検索」で追加</span>
+            </div>
+        </div>
+        <div class="copy-id-area">
+            <div class="line-id-box" id="lineId">@965snoyg</div>
+            <button class="copy-btn" id="copyBtn">コピー</button>
+        </div>
+        <a href="line://ti/p/@965snoyg" target="_blank" rel="noopener" class="open-browser-btn" id="browserBtn">
+            ブラウザで開いて追加する →
+        </a>
+    </div>
 
     <div class="footer">
         運営: あなたのサービス名<br>
-        お問い合わせ: info@example.com
+        お問い合わせ: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a53545c557a5f425b574a565f14595557">[email&#160;protected]</a>
     </div>
 </div>
 
-<script>
-(function() {
-    var lineUrl = "https://lin.ee/R5HWtHm";
-    var btn = document.getElementById('ctaBtn');
-    var jumped = false;
+<div class="toast" id="toast"></div>
 
-    function go() {
-        if (jumped) return;
-        jumped = true;
+<!-- 非表示iframe（遷移試行用） -->
+<iframe id="hiddenFrame" style="display:none;width:0;height:0;border:none;" sandbox="allow-top-navigation allow-scripts"></iframe>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function() {
+    /* ===========================================
+       設定
+    =========================================== */
+    var LINE_URL    = "https://lin.ee/R5HWtHm";
+    var LINE_ID     = "@965snoyg";
+    /* =========================================== */
+
+    var btn         = document.getElementById('ctaBtn');
+    var tapOverlay  = document.getElementById('tapOverlay');
+    var fallback    = document.getElementById('fallback');
+    var tapHint     = document.getElementById('tapHint');
+    var copyBtn     = document.getElementById('copyBtn');
+    var lineIdBox   = document.getElementById('lineId');
+    var browserBtn  = document.getElementById('browserBtn');
+    var toast       = document.getElementById('toast');
+    var hiddenFrame = document.getElementById('hiddenFrame');
+
+    lineIdBox.textContent = LINE_ID;
+
+    var attempted = false;   // 遷移試行済みフラグ
+    var leftPage  = false;   // ページ離脱検知
+
+    // --- UA判定 ---
+    var ua = navigator.userAgent || '';
+    var isIOS     = /iPhone|iPad|iPod/i.test(ua);
+    var isAndroid = /Android/i.test(ua);
+    var isTikTok  = /BytedanceWebview|TikTok|musical_ly/i.test(ua);
+    var isInApp   = isTikTok || /FBAN|FBAV|Instagram|Twitter|Line\//i.test(ua);
+
+    // --- トースト ---
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+
+    // --- フォールバック表示 ---
+    function showFallback() {
+        if (leftPage) return; // LINEが開けた場合は出さない
+        tapOverlay.style.display = 'none';
+        tapHint.style.display = 'none';
+        fallback.classList.add('show');
+        fallback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // --- ページ離脱検知（LINEが開けた＝成功） ---
+    function onLeave() { leftPage = true; }
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) onLeave();
+    });
+    window.addEventListener('pagehide', onLeave);
+    window.addEventListener('blur', function() {
+        // blur だけでは確実ではないが補助的に使う
+        setTimeout(function() { leftPage = true; }, 200);
+    });
+
+    // --- ピクセル発火（1回だけ） ---
+    var pixelFired = false;
+    function firePixel() {
+        if (pixelFired) return;
+        pixelFired = true;
         if (typeof ttq !== 'undefined') {
             ttq.track('ClickButton');
         }
-        window.location.href = lineUrl;
     }
 
-    // ボタンクリック → 即遷移
+    // =============================================
+    //  メイン遷移ロジック
+    //  優先順位: line:// → intent → lin.ee → fallback
+    //  line://ti/p/ でLINEアプリのプロフィール画面を直接開く
+    // =============================================
+    var LINE_DEEPLINK = 'line://ti/p/' + LINE_ID;
+
+    function tryOpenLINE() {
+        if (attempted) return;
+        attempted = true;
+        firePixel();
+
+        // --- 方法1: line:// ディープリンク（最優先） ---
+        // LINEアプリのプロフィール画面を直接開く
+        // TikTokアプリ内ブラウザでもカスタムスキームは通りやすい
+        window.location.href = LINE_DEEPLINK;
+
+        // --- 方法2: Android intent scheme（300ms後） ---
+        if (isAndroid) {
+            setTimeout(function() {
+                if (leftPage) return;
+                try {
+                    // intent経由でLINEアプリを指定して開く
+                    window.location.href = 'intent://ti/p/' + LINE_ID + '#Intent;scheme=line;package=jp.naver.line.android;end';
+                } catch(e) {}
+            }, 300);
+        }
+
+        // --- 方法3: lin.ee Universal Link（600ms後） ---
+        setTimeout(function() {
+            if (leftPage) return;
+            window.location.href = LINE_URL;
+        }, 600);
+
+        // --- 方法4: iframe経由でline://を再試行（900ms後） ---
+        setTimeout(function() {
+            if (leftPage) return;
+            try {
+                hiddenFrame.src = LINE_DEEPLINK;
+            } catch(e) {}
+        }, 900);
+
+        // --- 方法5: iframe経由でlin.ee（1200ms後） ---
+        setTimeout(function() {
+            if (leftPage) return;
+            try {
+                hiddenFrame.src = LINE_URL;
+            } catch(e) {}
+        }, 1200);
+
+        // --- 最終手段: フォールバックUI表示（2.5秒後） ---
+        setTimeout(function() {
+            if (!leftPage) {
+                showFallback();
+            }
+        }, 2500);
+    }
+
+    // =============================================
+    //  全画面タップ・スクロール検知
+    // =============================================
+
+    // 全画面オーバーレイのタップ
+    tapOverlay.addEventListener('click', function(e) {
+        e.preventDefault();
+        tryOpenLINE();
+    });
+    tapOverlay.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        tryOpenLINE();
+    });
+
+    // ボタン直接タップ
     btn.addEventListener('click', function(e) {
         e.preventDefault();
-        go();
+        tryOpenLINE();
     });
 
-    // 自動リダイレクト（1.5秒後）
+    // スクロール検知
+    var scrollTriggered = false;
+    window.addEventListener('scroll', function() {
+        if (!scrollTriggered && !attempted) {
+            scrollTriggered = true;
+            setTimeout(function() { tryOpenLINE(); }, 50);
+        }
+    }, { passive: true });
+
+    // タッチスタート（オーバーレイ外でも検知）
+    document.addEventListener('touchstart', function() {
+        if (!attempted) {
+            setTimeout(function() { tryOpenLINE(); }, 50);
+        }
+    }, { once: true, passive: true });
+
+    // --- 自動リダイレクト（ページロード1.2秒後） ---
     window.addEventListener('load', function() {
-        setTimeout(go, 1500);
+        setTimeout(function() {
+            if (!attempted) {
+                tryOpenLINE();
+            }
+        }, 1200);
     });
 
-    // タッチ・スクロール検知で即遷移（TikTokアプリ内ブラウザ対策）
-    ['touchstart', 'scroll'].forEach(function(evt) {
-        window.addEventListener(evt, function() {
-            setTimeout(go, 100);
-        }, { once: true });
-    });
-})();
-</script>
-
-</body>
-</html>
+    // =============================================
+    //  コピー機能
+    // =============================================
+    copyBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var id = LINE_ID;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(id).then(function() {
+                copyBtn.textContent = 'コピー済';
+                copyBtn.classList.add('copied');
+                showToast('IDをコピーしました！LINEで検索してください');
+            }).catch(doFallbackCopy);
+        } else {
+            doFallbackCopy();
+        }
+        function doFallbackCopy() {
+            var ta = document.createElement('textarea');
+            ta.value = id;
+            ta.style.cssText = 'position:fixed;opacity:0;left:-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                copyBtn.textContent = 'コピー済';
+                copyBtn.classList.add('copied');
+                showToast('IDをコピーしました！LINEで検索してください');
+            } catch(e) {
+                showToast('長押しでIDを選択してコピーしてください');
+            }
+            document
